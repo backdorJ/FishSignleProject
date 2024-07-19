@@ -33,8 +33,8 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
     /// <inheritdoc />
     public async Task Handle(PostRegisterCommand request, CancellationToken cancellationToken)
     {
-        Validate(request);
-
+        await ValidateAsync(request, cancellationToken);
+        
         var baseRoleFromDb = await _dbContext.Roles
             .FirstOrDefaultAsync(x => x.Id == DefaultRolesIds.User, cancellationToken)
             ?? throw new ApplicationBaseException($"Роль с id {DefaultRolesIds.User} не найдена");
@@ -61,10 +61,16 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private static void Validate(PostRegisterCommand request)
+    private async Task ValidateAsync(PostRegisterCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        var isExist = await _dbContext.Users
+            .AnyAsync(x => x.Email == request.Email, cancellationToken);
+
+        if (isExist)
+            throw new ApplicationException("Такой пользователь уже существует");
+        
         if (string.IsNullOrEmpty(request.Username))
             throw new RequiredException("Поле 'Логин' является обязательным");
 

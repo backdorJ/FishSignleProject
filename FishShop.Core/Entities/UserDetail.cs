@@ -24,4 +24,26 @@ public class UserDetail
     /// День рождения пользователя
     /// </summary>
     public DateTime? BirthDate { get; set; }
+
+    /// <summary>
+    /// Создать тестовую сущность
+    /// </summary>
+    /// <param name="firstName">Имя</param>
+    /// <param name="lastName">Фамилия</param>
+    /// <param name="patronymic">Отчество</param>
+    /// <param name="birthDay">День рождения</param>
+    /// <returns></returns>
+    [Obsolete("Только для тестов")]
+    public static UserDetail CreateForTest(
+        string firstName,
+        string lastName,
+        string? patronymic = default,
+        DateTime? birthDay = default)
+        => new()
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Patronymic = patronymic,
+            BirthDate = birthDay
+        };
 }

@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>6a539779-c1b0-4e3e-a9aa-1727a8a1e5c1</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,5 +23,10 @@
     <ItemGroup>
       <ProjectReference Include="..\FishShop.DAL\FishShop.DAL.csproj" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
 
 </Project>

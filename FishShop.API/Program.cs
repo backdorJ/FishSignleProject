@@ -9,11 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerCustom();
 builder.Services.AddCustomVersioning();
 builder.Services.AddCustomAuth(builder.Configuration);
 builder.Services.AddCore();
 builder.Services.AddDAL();
+builder.Services.AddBindOptions(builder.Configuration);
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseNpgsql(builder.Configuration["AppContext:DatabaseConnection"]));
 

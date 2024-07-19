@@ -29,7 +29,7 @@ public class AddProductCommandHandler
 
         var isExistInDb = await _dbContext.Products
             .AnyAsync(x =>
-                    x.Name.Equals(request.Name, StringComparison.CurrentCultureIgnoreCase)
+                    x.Name.ToLower() == request.Name.ToLower()
                     && x.Type == request.CategoryType,
                 cancellationToken);
 

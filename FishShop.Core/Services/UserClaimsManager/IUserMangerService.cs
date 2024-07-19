@@ -8,7 +8,10 @@ namespace FishShop.Core.Services.UserClaimsManager;
 /// </summary>
 public interface IUserMangerService
 {
+    /// <summary>
+    /// Получить claims пользователя
+    /// </summary>
+    /// <param name="user">Пользователь</param>
+    /// <returns>Список claims</returns>
     public List<Claim> GetUserClaims(User user);
-
-    public List<string> GetUserRoles(User user);
 }

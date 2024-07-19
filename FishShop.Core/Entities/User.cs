@@ -17,8 +17,8 @@ public class User : Entity
         string userName,
         string email,
         string hashPassword,
-        UserDetail? details,
-        List<Role>? roles)
+        UserDetail? details = default,
+        List<Role>? roles = default)
     {
         UserName = userName;
         Email = email;
@@ -55,4 +55,33 @@ public class User : Entity
     /// Роли
     /// </summary>
     public List<Role> Roles { get; }
+
+    /// <summary>
+    /// Тестовая сущность
+    /// </summary>
+    /// <param name="email">Почта</param>
+    /// <param name="detail">Детали</param>
+    /// <param name="roles">Роли</param>
+    /// <param name="hashPassword">Хеш</param>
+    /// <param name="userName">Имя</param>
+    /// <param name="id">ИД</param>
+    /// <returns></returns>
+    [Obsolete("Только для тестов")]
+    public static User CreateForTest(
+        string? email = default,
+        UserDetail? detail = default,
+        List<Role>? roles = default,
+        string? hashPassword = default,
+        string? userName = default,
+        Guid? id = default)
+        => new(
+            userName: userName ?? string.Empty,
+            email: email ?? string.Empty,
+            hashPassword: hashPassword ?? String.Empty,
+            roles: roles)
+            {
+                Id = id ?? Guid.NewGuid(),
+                Email = email ?? string.Empty,
+                Details = detail ?? new()
+            };
 }

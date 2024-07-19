@@ -171,6 +171,12 @@ namespace FishShop.DAL.Migrations
                         .HasColumnName("email")
                         .HasComment("Почта");
 
+                    b.Property<string>("HashPassword")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("hash")
+                        .HasComment("Хеш пароля");
+
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("update_at")

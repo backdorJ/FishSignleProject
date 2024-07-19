@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using FishShop.Core.Entities;
 
 namespace FishShop.Core.Services.JWTService;
 
@@ -12,5 +11,5 @@ public interface IJwtGenerator
     /// Сгенерировать токен
     /// </summary>
     /// <returns>Токен</returns>
-    public string GenerateToken(User user, List<Claim> claims);
+    public string GenerateToken(List<Claim> claims);
 }

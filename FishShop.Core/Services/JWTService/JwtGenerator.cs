@@ -16,7 +16,7 @@ public class JwtGenerator(IOptions<JwtOptions> options) : IJwtGenerator
     private readonly JwtOptions _options = options.Value;
 
     /// <inheritdoc />
-    public string GenerateToken(User user, List<Claim> claims)
+    public string GenerateToken(List<Claim> claims)
     {
         var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
 

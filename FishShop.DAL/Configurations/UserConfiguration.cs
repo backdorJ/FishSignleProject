@@ -24,6 +24,11 @@ public class UserConfiguration : EntityBaseConfiguration<User>
             .HasComment("Логин")
             .HasColumnName("username");
 
+        builder.Property(p => p.HashPassword)
+            .IsRequired()
+            .HasColumnName("hash")
+            .HasComment("Хеш пароля");
+
         builder.OwnsOne(x => x.Details, conf =>
         {
             conf.Property(p => p.FirstName)

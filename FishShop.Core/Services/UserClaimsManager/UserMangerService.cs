@@ -26,8 +26,7 @@ public class UserMangerService : IUserMangerService
         return claims;
     }
 
-    /// <inheritdoc />
-    public List<string> GetUserRoles(User user)
+    private List<string> GetUserRoles(User user)
         => user.Roles
             .Select(x => x.RoleName)
             .ToList();
