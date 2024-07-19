@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\FishShop.API.props" />
+</Project>
