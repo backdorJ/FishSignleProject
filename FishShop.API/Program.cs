@@ -3,20 +3,22 @@ using FishShop.API.Versions;
 using FishShop.Core;
 using FishShop.Core.Services;
 using FishShop.DAL;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddControllers();
+
 builder.Services.AddSwaggerCustom();
 builder.Services.AddCustomVersioning();
-builder.Services.AddCustomAuth(builder.Configuration);
+
 builder.Services.AddCore();
 builder.Services.AddDAL();
+builder.Services.AddCustomAuth(builder.Configuration);
 builder.Services.AddBindOptions(builder.Configuration);
-builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseNpgsql(builder.Configuration["AppContext:DatabaseConnection"]));
+builder.Services.AddDbContext(builder.Configuration);
+builder.Services.AddCustomLogging(builder.Configuration);
 
 var app = builder.Build();
 using var scope = app.Services.CreateScope();
@@ -31,6 +33,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.AddExceptionMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
 
