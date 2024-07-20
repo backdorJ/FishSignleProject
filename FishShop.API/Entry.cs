@@ -1,9 +1,14 @@
 using System.Reflection;
 using System.Text;
+using FishShop.API.Middlewares;
 using FishShop.Core.Models;
+using FishShop.DAL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Filters;
 
 namespace FishShop.API;
 
@@ -13,6 +18,7 @@ public static class Entry
     /// Добавить аутентификацию
     /// </summary>
     /// <param name="services">Сервисы</param>
+    /// <param name="configuration">Конфигурация</param>
     public static void AddCustomAuth(this IServiceCollection services, IConfiguration configuration)
         => services.AddAuthentication(options =>
             {
@@ -34,15 +40,14 @@ public static class Entry
                 };
             });
 
+
     /// <summary>
     /// Добавить привязки настроек к классам
     /// </summary>
     /// <param name="services">Сервисы</param>
     /// <param name="configuration">Конфигурация</param>
     public static void AddBindOptions(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-    }
+        => services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
 
     /// <summary>
     /// Конфигурация сваггера
@@ -79,4 +84,46 @@ public static class Entry
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
+
+    /// <summary>
+    /// Добавить кастомный Logger
+    /// </summary>
+    /// <param name="services">Сервисы</param>
+    /// <param name="configuration">Конфигурация</param>
+    public static void AddCustomLogging(this IServiceCollection services, IConfiguration configuration)
+        => services.AddLogging(b => b.AddSerilog(new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .Enrich.WithProperty("Environment", "Developer")
+            .WriteTo.Logger(lc =>
+                lc.Filter.ByExcluding(Matching.FromSource("Microsoft"))
+                    .MinimumLevel.Error()
+                    .WriteTo.OpenSearch(
+                        nodeUris: configuration["OpenSearch:Connection"],
+                        indexFormat: "fish-logs-{0:yyyy.MM.dd}"))
+            .WriteTo.Logger(lc =>
+                lc.Filter.ByIncludingOnly(Matching.FromSource("Microsoft"))
+                    .WriteTo.OpenSearch(
+                        nodeUris: configuration["OpenSearch:Connection"],
+                        indexFormat: "fish-query-logs-{0:yyyy.MM.dd}"))
+            .WriteTo.Logger(lc => lc
+                .MinimumLevel.Information()
+                .WriteTo
+                .Console())
+            .CreateLogger()));
+
+    /// <summary>
+    /// Добавить подключение к бд
+    /// </summary>
+    /// <param name="services">Сервисы</param>
+    /// <param name="configuration">Конфигурация</param>
+    public static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
+        => services.AddDbContext<AppDbContext>(
+            options => options.UseNpgsql(configuration["AppContext:DatabaseConnection"]));
+
+    /// <summary>
+    /// Добавить exception middleware
+    /// </summary>
+    /// <param name="app">Приложение</param>
+    public static void AddExceptionMiddleware(this IApplicationBuilder app)
+        => app.UseMiddleware<ExceptionMiddleware>();
 }
