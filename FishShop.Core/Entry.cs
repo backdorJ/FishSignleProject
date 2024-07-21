@@ -1,4 +1,5 @@
 using FishShop.Core.Services;
+using FishShop.Core.Services.GuidFactory;
 using FishShop.Core.Services.JWTService;
 using FishShop.Core.Services.PasswordService;
 using FishShop.Core.Services.UserClaimsManager;
@@ -17,8 +18,10 @@ public static class Entry
         services.AddMediatR(from => from.RegisterServicesFromAssembly(typeof(Entry).Assembly));
         services.AddTransient<DbSeeder>();
 
-        services.AddScoped<IJwtGenerator, JwtGenerator>();
-        services.AddScoped<IUserMangerService, UserMangerService>();
-        services.AddScoped<IPasswordService, PasswordService>();
+        services
+            .AddScoped<IJwtGenerator, JwtGenerator>()
+            .AddScoped<IUserMangerService, UserMangerService>()
+            .AddScoped<IPasswordService, PasswordService>()
+            .AddScoped<IGuidFactory, GuidFactory>();
     }
 }

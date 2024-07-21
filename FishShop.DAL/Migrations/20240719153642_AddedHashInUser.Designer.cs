@@ -3,6 +3,7 @@ using System;
 using FishShop.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FishShop.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240719153642_AddedHashInUser")]
+    partial class AddedHashInUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,11 +179,6 @@ namespace FishShop.DAL.Migrations
                         .HasColumnType("text")
                         .HasColumnName("hash")
                         .HasComment("Хеш пароля");
-
-                    b.Property<string>("TempEmailCode")
-                        .HasColumnType("text")
-                        .HasColumnName("temp_email_code")
-                        .HasComment("Код подтверждения для почты");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone")

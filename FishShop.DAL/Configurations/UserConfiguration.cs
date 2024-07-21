@@ -29,6 +29,10 @@ public class UserConfiguration : EntityBaseConfiguration<User>
             .HasColumnName("hash")
             .HasComment("Хеш пароля");
 
+        builder.Property(p => p.TempEmailCode)
+            .HasComment("Код подтверждения для почты")
+            .HasColumnName("temp_email_code");
+
         builder.OwnsOne(x => x.Details, conf =>
         {
             conf.Property(p => p.FirstName)

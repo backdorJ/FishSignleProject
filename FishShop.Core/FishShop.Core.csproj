@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FishShop.Contracts\FishShop.Contracts.csproj" />
+      <ProjectReference Include="..\FishShop.RabbitMQ\FishShop.RabbitMQ.csproj" />
     </ItemGroup>
 
 </Project>

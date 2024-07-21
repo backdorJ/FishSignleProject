@@ -1,11 +1,17 @@
 using System.Security.Claims;
+using FishShop.Contracts.Models;
 using FishShop.Core.Entities;
+using FishShop.Core.Models;
+using FishShop.Core.Services.GuidFactory;
 using FishShop.Core.Services.JWTService;
 using FishShop.Core.Services.PasswordService;
 using FishShop.Core.Services.UserClaimsManager;
 using FishShop.DAL;
+using FishShop.RabbitMQ;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using IPublisher = FishShop.RabbitMQ.IPublisher;
 
 namespace FishShop.UnitTests;
 
@@ -25,6 +31,16 @@ public abstract class UnitTestBase : IDisposable
     /// Мок сервиса токенов
     /// </summary>
     protected Mock<IJwtGenerator> JwtGenerator { get; }
+    
+    /// <summary>
+    /// Мок сервиса Guid
+    /// </summary>
+    protected Mock<IGuidFactory> GuidFactory { get; }
+    
+    /// <summary>
+    /// Мок сервиса брокера 
+    /// </summary>
+    protected Mock<IPublisher> Publisher { get; }
 
     protected UnitTestBase()
     {
@@ -44,6 +60,14 @@ public abstract class UnitTestBase : IDisposable
         PasswordService
             .Setup(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()))
             .Returns(true);
+
+        GuidFactory = new Mock<IGuidFactory>();
+        GuidFactory.Setup(x => x.GetGuid())
+            .Returns(Guid.Parse("CA6CAD75-2A9C-44F0-B1DC-02ECB98EE3CD"));
+
+        Publisher = new Mock<IPublisher>();
+        Publisher.Setup(x => x.Send(It.IsAny<QueueRequest>()))
+            .Verifiable();
     }
     
     protected AppDbContext CreateInMemoryContext(Action<AppDbContext>? seeder = null)

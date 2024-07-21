@@ -1,11 +1,14 @@
+using FishShop.Contracts.Models;
 using FishShop.Core.Abstractions;
 using FishShop.Core.Constants;
 using FishShop.Core.Entities;
 using FishShop.Core.Exceptions;
 using FishShop.Core.Services;
+using FishShop.Core.Services.GuidFactory;
 using FishShop.Core.Services.PasswordService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using IPublisher = FishShop.RabbitMQ.IPublisher;
 
 namespace FishShop.Core.Requests.AuthRequests.PostRegister;
 
@@ -14,20 +17,31 @@ namespace FishShop.Core.Requests.AuthRequests.PostRegister;
 /// </summary>
 public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
 {
+    private const string QueueRouteKey = "email-codes";
+    private const string QueueName = "email-codes";
+    
     private readonly IDbContext _dbContext;
     private readonly IPasswordService _passwordService;
-
+    private readonly IGuidFactory _guidFactory;
+    private readonly IPublisher _publisher;
+    
     /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="dbContext">Контекст БД</param>
     /// <param name="passwordService">Сервис для хеширования паролей</param>
+    /// <param name="guidFactory">Фабрика guid</param>
+    /// <param name="publisher">Отправить сообщение в очередь</param>
     public PostRegisterCommandHandler(
         IDbContext dbContext,
-        IPasswordService passwordService)
+        IPasswordService passwordService,
+        IGuidFactory guidFactory,
+        IPublisher publisher)
     {
         _dbContext = dbContext;
         _passwordService = passwordService;
+        _guidFactory = guidFactory;
+        _publisher = publisher;
     }
 
     /// <inheritdoc />
@@ -39,12 +53,14 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
             .FirstOrDefaultAsync(x => x.Id == DefaultRolesIds.User, cancellationToken)
             ?? throw new ApplicationBaseException($"Роль с id {DefaultRolesIds.User} не найдена");
 
+        var generateRandomCode = _guidFactory.GetGuid();
         var hashPassword = _passwordService.HashPassword(request.Password);
         
         var user = new User(
             userName: request.Username,
             hashPassword: hashPassword,
             email: request.Email,
+            tempEmailCode: generateRandomCode.ToString(),
             details: new UserDetail
             {
                 FirstName = request.UserDetails.FirstName,
@@ -59,6 +75,17 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
         
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        _publisher.Send(new QueueRequest
+        {
+            Message = new Dictionary<string, string>
+            {
+                ["Code"] = generateRandomCode.ToString(),
+                ["Email"] = request.Email
+            },
+            RoutingKey = QueueRouteKey,
+            QueueName = QueueName,
+        });
     }
 
     private async Task ValidateAsync(PostRegisterCommand request, CancellationToken cancellationToken)

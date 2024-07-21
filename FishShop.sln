@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-
 		.dockerignore = .dockerignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishShop.RabbitMQ", "FishShop.RabbitMQ\FishShop.RabbitMQ.csproj", "{37DEAEFB-6E08-471C-AB9E-29E1CBBDB1DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,5 +45,9 @@ Global
 		{EAAA51BC-14C6-4F65-9BA3-99E3912245C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAAA51BC-14C6-4F65-9BA3-99E3912245C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAAA51BC-14C6-4F65-9BA3-99E3912245C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37DEAEFB-6E08-471C-AB9E-29E1CBBDB1DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37DEAEFB-6E08-471C-AB9E-29E1CBBDB1DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37DEAEFB-6E08-471C-AB9E-29E1CBBDB1DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37DEAEFB-6E08-471C-AB9E-29E1CBBDB1DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
