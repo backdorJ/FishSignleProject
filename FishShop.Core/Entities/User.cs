@@ -11,12 +11,14 @@ public class User : Entity
     /// <param name="userName">Логин пользователя</param>
     /// <param name="email">Почта</param>
     /// <param name="hashPassword">Хеш пароля</param>
+    /// <param name="tempEmailCode">Код для почты</param>
     /// <param name="details">Детали</param>
     /// <param name="roles">Роли</param>
     public User(
         string userName,
         string email,
         string hashPassword,
+        string? tempEmailCode = default,
         UserDetail? details = default,
         List<Role>? roles = default)
     {
@@ -25,6 +27,7 @@ public class User : Entity
         HashPassword = hashPassword;
         Details = details ?? new UserDetail();
         Roles = roles ?? new();
+        TempEmailCode = tempEmailCode;
     }
 
     private User()
@@ -40,6 +43,11 @@ public class User : Entity
     /// Хеш пароля
     /// </summary>
     public string HashPassword { get; set; }
+
+    /// <summary>
+    /// Код подтверждения для почты
+    /// </summary>
+    public string? TempEmailCode { get; set; }
     
     /// <summary>
     /// Почта

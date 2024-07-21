@@ -43,13 +43,19 @@ public class PostRegisterCommandHandlerTest : UnitTestBase
             }
         };
 
-        var handler = new PostRegisterCommandHandler(_dbContext, PasswordService.Object);
+        var handler = new PostRegisterCommandHandler(
+            _dbContext,
+            PasswordService.Object,
+            GuidFactory.Object,
+            Publisher.Object);
+        
         await handler.Handle(request, default);
 
         var response = await _dbContext.Users.FirstOrDefaultAsync();
 
         Assert.NotNull(response);
         Assert.NotNull(response.Details);
+        Assert.NotNull(response.TempEmailCode);
         
         Assert.NotEmpty(response.HashPassword);
         

@@ -3,6 +3,7 @@ using FishShop.API.Versions;
 using FishShop.Core;
 using FishShop.Core.Services;
 using FishShop.DAL;
+using FishShop.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddCustomVersioning();
 
 builder.Services.AddCore();
 builder.Services.AddDAL();
+builder.Services.AddRabbitMQ();
 builder.Services.AddCustomAuth(builder.Configuration);
 builder.Services.AddBindOptions(builder.Configuration);
 builder.Services.AddDbContext(builder.Configuration);
