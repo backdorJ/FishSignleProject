@@ -1,14 +1,12 @@
 using System.Security.Claims;
 using FishShop.Contracts.Models;
 using FishShop.Core.Entities;
-using FishShop.Core.Models;
 using FishShop.Core.Services.GuidFactory;
 using FishShop.Core.Services.JWTService;
+using FishShop.Core.Services.NextFactory;
 using FishShop.Core.Services.PasswordService;
 using FishShop.Core.Services.UserClaimsManager;
 using FishShop.DAL;
-using FishShop.RabbitMQ;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using IPublisher = FishShop.RabbitMQ.IPublisher;
@@ -41,6 +39,11 @@ public abstract class UnitTestBase : IDisposable
     /// Мок сервиса брокера 
     /// </summary>
     protected Mock<IPublisher> Publisher { get; }
+    
+    /// <summary>
+    /// Mock сервиса рандомный чисел
+    /// </summary>
+    protected Mock<INextFactory> NextFactory { get; }
 
     protected UnitTestBase()
     {
@@ -68,6 +71,10 @@ public abstract class UnitTestBase : IDisposable
         Publisher = new Mock<IPublisher>();
         Publisher.Setup(x => x.Send(It.IsAny<QueueRequest>()))
             .Verifiable();
+
+        NextFactory = new Mock<INextFactory>();
+        NextFactory.Setup(x => x.GetNextFactory())
+            .Returns("1234");
     }
     
     protected AppDbContext CreateInMemoryContext(Action<AppDbContext>? seeder = null)

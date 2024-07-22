@@ -1,6 +1,8 @@
 using FishShop.API.Versions;
+using FishShop.Contracts.Requests.AuthRequests.ConfirmEmailCode;
 using FishShop.Contracts.Requests.AuthRequests.PostLogin;
 using FishShop.Contracts.Requests.AuthRequests.PostRegister;
+using FishShop.Core.Requests.AuthRequests.ConfirmEmailCode;
 using FishShop.Core.Requests.AuthRequests.PostLogin;
 using FishShop.Core.Requests.AuthRequests.PostRegister;
 using MediatR;
@@ -60,5 +62,22 @@ public class AuthController : BaseApiController
         {
             Email = request.Email,
             Password = request.Password
+        }, cancellationToken);
+
+    /// <summary>
+    /// Подтвердить почту
+    /// </summary>
+    /// <param name="mediator">Медиатор CQRS</param>
+    /// <param name="request">Запрос</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    [HttpPost("ConfirmEmail")]
+    public async Task ConfirmEmailAsync(
+        [FromServices] IMediator mediator,
+        [FromBody] ConfirmEmailCodeRequest request,
+        CancellationToken cancellationToken)
+        => await mediator.Send(new ConfirmEmailCodeCommand
+        {
+            Email = request.Email,
+            Code = request.Code
         }, cancellationToken);
 }

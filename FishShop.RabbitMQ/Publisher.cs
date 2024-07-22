@@ -40,6 +40,12 @@ public class Publisher : IPublisher, IDisposable
             exclusive: false,
             autoDelete: false);
         
+        _channel.QueueBindNoWait(
+            queue: notification.QueueName,
+            exchange: ExchangeName,
+            routingKey: notification.RoutingKey,
+            arguments: null);
+        
         _channel.BasicPublish(
             exchange: ExchangeName,
             routingKey: notification.RoutingKey,
