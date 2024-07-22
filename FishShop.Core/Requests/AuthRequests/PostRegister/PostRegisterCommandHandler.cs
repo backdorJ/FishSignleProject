@@ -18,12 +18,8 @@ namespace FishShop.Core.Requests.AuthRequests.PostRegister;
 /// </summary>
 public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
 {
-    private const string QueueRouteKey = "email-codes";
-    private const string QueueName = "email-codes";
-    
     private readonly IDbContext _dbContext;
     private readonly IPasswordService _passwordService;
-    private readonly IPublisher _publisher;
     private readonly INextFactory _nextFactory;
 
     /// <summary>
@@ -31,17 +27,14 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
     /// </summary>
     /// <param name="dbContext">Контекст БД</param>
     /// <param name="passwordService">Сервис для хеширования паролей</param>
-    /// <param name="publisher">Отправить сообщение в очередь</param>
-    /// <param name="nextFactory">Фабрика рандомных чисел</param>
+    /// <param name="nextFactory">Фабрика чисел</param>
     public PostRegisterCommandHandler(
         IDbContext dbContext,
         IPasswordService passwordService,
-        IPublisher publisher,
         INextFactory nextFactory)
     {
         _dbContext = dbContext;
         _passwordService = passwordService;
-        _publisher = publisher;
         _nextFactory = nextFactory;
     }
 
@@ -73,20 +66,11 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
             {
                 baseRoleFromDb
             });
-
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
         
-        _publisher.Send(new QueueRequest
-        {
-            Message = new Dictionary<string, string>
-            {
-                ["Code"] = generateRandomCode,
-                ["Email"] = request.Email
-            },
-            RoutingKey = QueueRouteKey,
-            QueueName = QueueName,
-        });
+        user.ChangeStatus(UserRegisterStatus.RegisterButNotConfirmed);
+
+        await _dbContext.Users.AddAsync(user, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task ValidateAsync(PostRegisterCommand request, CancellationToken cancellationToken)

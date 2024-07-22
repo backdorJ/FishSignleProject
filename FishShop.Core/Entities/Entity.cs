@@ -1,3 +1,6 @@
+using System.Collections.Concurrent;
+using FishShop.Core.Abstractions;
+
 namespace FishShop.Core.Entities;
 
 /// <summary>
@@ -5,6 +8,11 @@ namespace FishShop.Core.Entities;
 /// </summary>
 public class Entity
 {
+    /// <summary>
+    /// Очередь событий
+    /// </summary>
+    private ConcurrentQueue<IDomainEvent> _concurrentQueue = new();
+    
     /// <summary>
     /// ИД сущности
     /// </summary>
@@ -19,4 +27,25 @@ public class Entity
     /// Дата обновления сущности
     /// </summary>
     public DateTime? UpdateAt { get; set; }
+
+    /// <summary>
+    /// Добавить событие в очередь
+    /// </summary>
+    /// <param name="domainEvent">Событие</param>
+    public void AddDomainEvent(IDomainEvent domainEvent) => _concurrentQueue.Enqueue(domainEvent);
+
+    /// <summary>
+    /// Получить события
+    /// </summary>
+    /// <returns>Событие</returns>
+    public IEnumerable<IDomainEvent> GetDomainEvents()
+    {
+        var result = _concurrentQueue
+            .Select(x => x)
+            .ToList();
+        
+        _concurrentQueue.Clear();
+
+        return result;
+    }
 }

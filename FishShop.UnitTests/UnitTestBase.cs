@@ -7,7 +7,9 @@ using FishShop.Core.Services.NextFactory;
 using FishShop.Core.Services.PasswordService;
 using FishShop.Core.Services.UserClaimsManager;
 using FishShop.DAL;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using IPublisher = FishShop.RabbitMQ.IPublisher;
 
@@ -44,9 +46,16 @@ public abstract class UnitTestBase : IDisposable
     /// Mock сервиса рандомный чисел
     /// </summary>
     protected Mock<INextFactory> NextFactory { get; }
+    
+    /// <summary>
+    /// Mock медиатора
+    /// </summary>
+    protected Mock<IMediator> MediatR { get; }
 
     protected UnitTestBase()
     {
+        MediatR = new Mock<IMediator>();
+        
         UserManager = new Mock<IUserMangerService>();
         UserManager
             .Setup(x => x.GetUserClaims(It.IsAny<User>()))
@@ -80,10 +89,13 @@ public abstract class UnitTestBase : IDisposable
     protected AppDbContext CreateInMemoryContext(Action<AppDbContext>? seeder = null)
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
+            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
-        var appDbContext = new AppDbContext(options);
+        var appDbContext = new AppDbContext(
+            options,
+            MediatR.Object);
         
         seeder?.Invoke(appDbContext);
         appDbContext.SaveChanges();

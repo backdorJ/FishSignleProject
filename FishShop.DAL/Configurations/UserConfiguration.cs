@@ -1,3 +1,4 @@
+using FishShop.Core.Constants;
 using FishShop.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -32,6 +33,14 @@ public class UserConfiguration : EntityBaseConfiguration<User>
         builder.Property(p => p.TempEmailCode)
             .HasComment("Код подтверждения для почты")
             .HasColumnName("temp_email_code");
+
+        builder.Property(p => p.Status)
+            .HasColumnName("status")
+            .HasComment("Статус регистрации")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion(
+                v => v.ToString(),
+                e => (UserRegisterStatus)Enum.Parse(typeof(UserRegisterStatus), e));
 
         builder.OwnsOne(x => x.Details, conf =>
         {

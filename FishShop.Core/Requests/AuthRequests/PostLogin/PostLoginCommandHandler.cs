@@ -1,6 +1,7 @@
 using FishShop.Contracts.Models;
 using FishShop.Contracts.Requests.AuthRequests.PostLogin;
 using FishShop.Core.Abstractions;
+using FishShop.Core.Constants;
 using FishShop.Core.Exceptions;
 using FishShop.Core.Services.JWTService;
 using FishShop.Core.Services.NextFactory;
@@ -65,7 +66,7 @@ public class PostLoginCommandHandler
 
         var generateRandomCode = _nextFactory.GetNextFactory();
         
-        if (currentUser.TempEmailCode != null)
+        if (currentUser.Status != UserRegisterStatus.RegisteredAndConfirmed)
         {
             _publisher.Send(new QueueRequest
             {
