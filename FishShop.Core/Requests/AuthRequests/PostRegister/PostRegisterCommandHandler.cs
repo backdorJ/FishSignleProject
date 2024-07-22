@@ -5,6 +5,7 @@ using FishShop.Core.Entities;
 using FishShop.Core.Exceptions;
 using FishShop.Core.Services;
 using FishShop.Core.Services.GuidFactory;
+using FishShop.Core.Services.NextFactory;
 using FishShop.Core.Services.PasswordService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,26 +23,26 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
     
     private readonly IDbContext _dbContext;
     private readonly IPasswordService _passwordService;
-    private readonly IGuidFactory _guidFactory;
     private readonly IPublisher _publisher;
-    
+    private readonly INextFactory _nextFactory;
+
     /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="dbContext">Контекст БД</param>
     /// <param name="passwordService">Сервис для хеширования паролей</param>
-    /// <param name="guidFactory">Фабрика guid</param>
     /// <param name="publisher">Отправить сообщение в очередь</param>
+    /// <param name="nextFactory">Фабрика рандомных чисел</param>
     public PostRegisterCommandHandler(
         IDbContext dbContext,
         IPasswordService passwordService,
-        IGuidFactory guidFactory,
-        IPublisher publisher)
+        IPublisher publisher,
+        INextFactory nextFactory)
     {
         _dbContext = dbContext;
         _passwordService = passwordService;
-        _guidFactory = guidFactory;
         _publisher = publisher;
+        _nextFactory = nextFactory;
     }
 
     /// <inheritdoc />
@@ -53,14 +54,14 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
             .FirstOrDefaultAsync(x => x.Id == DefaultRolesIds.User, cancellationToken)
             ?? throw new ApplicationBaseException($"Роль с id {DefaultRolesIds.User} не найдена");
 
-        var generateRandomCode = _guidFactory.GetGuid();
+        var generateRandomCode = _nextFactory.GetNextFactory();
         var hashPassword = _passwordService.HashPassword(request.Password);
         
         var user = new User(
             userName: request.Username,
             hashPassword: hashPassword,
             email: request.Email,
-            tempEmailCode: generateRandomCode.ToString(),
+            tempEmailCode: generateRandomCode,
             details: new UserDetail
             {
                 FirstName = request.UserDetails.FirstName,
@@ -72,7 +73,7 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
             {
                 baseRoleFromDb
             });
-        
+
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
         
@@ -80,7 +81,7 @@ public class PostRegisterCommandHandler : IRequestHandler<PostRegisterCommand>
         {
             Message = new Dictionary<string, string>
             {
-                ["Code"] = generateRandomCode.ToString(),
+                ["Code"] = generateRandomCode,
                 ["Email"] = request.Email
             },
             RoutingKey = QueueRouteKey,

@@ -68,6 +68,7 @@ public class User : Entity
     /// Тестовая сущность
     /// </summary>
     /// <param name="email">Почта</param>
+    /// <param name="code">Код</param>
     /// <param name="detail">Детали</param>
     /// <param name="roles">Роли</param>
     /// <param name="hashPassword">Хеш</param>
@@ -77,6 +78,7 @@ public class User : Entity
     [Obsolete("Только для тестов")]
     public static User CreateForTest(
         string? email = default,
+        string? code = default,
         UserDetail? detail = default,
         List<Role>? roles = default,
         string? hashPassword = default,
@@ -86,7 +88,8 @@ public class User : Entity
             userName: userName ?? string.Empty,
             email: email ?? string.Empty,
             hashPassword: hashPassword ?? String.Empty,
-            roles: roles)
+            roles: roles,
+            tempEmailCode: code)
             {
                 Id = id ?? Guid.NewGuid(),
                 Email = email ?? string.Empty,

@@ -16,10 +16,9 @@ public class PostLoginCommandHandlerTest : UnitTestBase
     {
         _user = User.CreateForTest(
             email: "email@mail.ru",
-            hashPassword: "123",
             detail: UserDetail.CreateForTest(
                 firstName: "asdad",
-                lastName: "asdasd"));
+                lastName: "asdasd"), hashPassword: "123");
         
         _dbContext = CreateInMemoryContext(x => x.AddRange(_user));
     } 
@@ -40,7 +39,9 @@ public class PostLoginCommandHandlerTest : UnitTestBase
             _dbContext,
             UserManager.Object,
             JwtGenerator.Object,
-            PasswordService.Object);
+            PasswordService.Object,
+            Publisher.Object,
+            NextFactory.Object);
 
         var response = await handler.Handle(request, default);
 

@@ -9,6 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="HotChocolate.AspNetCore" Version="13.9.7" />
+        <PackageReference Include="HotChocolate.Data" Version="13.9.7" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
@@ -27,6 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FishShop.DAL\FishShop.DAL.csproj" />
+      <ProjectReference Include="..\FishShop.GraphQL\FishShop.GraphQL.csproj" />
       <ProjectReference Include="..\FishShop.RabbitMQ\FishShop.RabbitMQ.csproj" />
     </ItemGroup>
 

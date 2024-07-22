@@ -24,6 +24,13 @@ public class Product : Entity
     }
 
     /// <summary>
+    /// Конструктор
+    /// </summary>
+    private Product()
+    {
+    }
+
+    /// <summary>
     /// Название товара
     /// </summary>
     public string Name { get; set; }

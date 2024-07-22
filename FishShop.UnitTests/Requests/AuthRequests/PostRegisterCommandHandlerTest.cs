@@ -46,8 +46,8 @@ public class PostRegisterCommandHandlerTest : UnitTestBase
         var handler = new PostRegisterCommandHandler(
             _dbContext,
             PasswordService.Object,
-            GuidFactory.Object,
-            Publisher.Object);
+            Publisher.Object,
+            NextFactory.Object);
         
         await handler.Handle(request, default);
 

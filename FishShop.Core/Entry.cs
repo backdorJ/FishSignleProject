@@ -1,6 +1,7 @@
 using FishShop.Core.Services;
 using FishShop.Core.Services.GuidFactory;
 using FishShop.Core.Services.JWTService;
+using FishShop.Core.Services.NextFactory;
 using FishShop.Core.Services.PasswordService;
 using FishShop.Core.Services.UserClaimsManager;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ public static class Entry
             .AddScoped<IJwtGenerator, JwtGenerator>()
             .AddScoped<IUserMangerService, UserMangerService>()
             .AddScoped<IPasswordService, PasswordService>()
-            .AddScoped<IGuidFactory, GuidFactory>();
+            .AddScoped<IGuidFactory, GuidFactory>()
+            .AddScoped<INextFactory, NextFactory>();
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Filters;
+using Path = System.IO.Path;
 
 namespace FishShop.API;
 

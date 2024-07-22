@@ -1,8 +1,11 @@
 using FishShop.API;
+using FishShop.API.Cors;
 using FishShop.API.Versions;
 using FishShop.Core;
 using FishShop.Core.Services;
 using FishShop.DAL;
+using FishShop.GraphQL;
+using FishShop.GraphQL.Queries;
 using FishShop.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +24,8 @@ builder.Services.AddCustomAuth(builder.Configuration);
 builder.Services.AddBindOptions(builder.Configuration);
 builder.Services.AddDbContext(builder.Configuration);
 builder.Services.AddCustomLogging(builder.Configuration);
+builder.Services.AddCustomCors();
+builder.Services.AddMyGraphQl();
 
 var app = builder.Build();
 using var scope = app.Services.CreateScope();
@@ -29,6 +34,8 @@ var migrator = scope.ServiceProvider.GetRequiredService<Migrator>();
 await migrator.MigrateAsync();
 await seeder.SeedAsync(CancellationToken.None);
 
+
+app.UseCors();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -41,5 +48,6 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapMyGraphQl();
 
 app.Run();
