@@ -1,4 +1,5 @@
 using FishShop.Core.Abstractions;
+using FishShop.Core.Constants;
 using FishShop.Core.Exceptions;
 using FishShop.Core.Services;
 using MediatR;
@@ -31,6 +32,8 @@ public class ConfirmEmailCodeCommandHandler(IDbContext dbContext) : IRequestHand
             throw new ApplicationBaseException("Код неверный");
         
         user.TempEmailCode = null;
+        user.ChangeStatus(UserRegisterStatus.RegisteredAndConfirmed);
+        
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

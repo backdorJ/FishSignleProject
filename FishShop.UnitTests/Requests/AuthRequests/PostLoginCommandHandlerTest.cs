@@ -1,4 +1,5 @@
 using FishShop.Core.Abstractions;
+using FishShop.Core.Constants;
 using FishShop.Core.Entities;
 using FishShop.Core.Requests.AuthRequests.PostLogin;
 
@@ -16,6 +17,7 @@ public class PostLoginCommandHandlerTest : UnitTestBase
     {
         _user = User.CreateForTest(
             email: "email@mail.ru",
+            status: UserRegisterStatus.RegisteredAndConfirmed,
             detail: UserDetail.CreateForTest(
                 firstName: "asdad",
                 lastName: "asdasd"), hashPassword: "123");

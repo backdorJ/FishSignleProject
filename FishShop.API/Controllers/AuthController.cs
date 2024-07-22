@@ -70,6 +70,8 @@ public class AuthController : BaseApiController
     /// <param name="mediator">Медиатор CQRS</param>
     /// <param name="request">Запрос</param>
     /// <param name="cancellationToken">Токен отмены</param>
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, type: typeof(ProblemDetails))]
     [HttpPost("ConfirmEmail")]
     public async Task ConfirmEmailAsync(
         [FromServices] IMediator mediator,

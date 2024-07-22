@@ -1,3 +1,6 @@
+using FishShop.Core.Constants;
+using FishShop.Core.Requests.DomainEvents.PostRegister;
+
 namespace FishShop.Core.Entities;
 
 /// <summary>
@@ -5,6 +8,8 @@ namespace FishShop.Core.Entities;
 /// </summary>
 public class User : Entity
 {
+    private UserRegisterStatus _status;
+    
     /// <summary>
     /// Конструктор
     /// </summary>
@@ -28,6 +33,7 @@ public class User : Entity
         Details = details ?? new UserDetail();
         Roles = roles ?? new();
         TempEmailCode = tempEmailCode;
+        Status = UserRegisterStatus.None;
     }
 
     private User()
@@ -55,6 +61,24 @@ public class User : Entity
     public string Email { get; set; }
 
     /// <summary>
+    /// Статус регистрации
+    /// </summary>
+    public UserRegisterStatus Status
+    {
+        get => _status;
+        set
+        {
+            if (value == _status)
+                return;
+            
+            if (value == UserRegisterStatus.RegisterButNotConfirmed)
+                AddDomainEvent(new PostRegisterDomainEvent(this));
+
+            _status = value;
+        }
+    }
+
+    /// <summary>
     /// Данные пользователя
     /// </summary>
     public UserDetail Details { get; set; }
@@ -65,10 +89,16 @@ public class User : Entity
     public List<Role> Roles { get; }
 
     /// <summary>
+    /// Изменить статус пользователя
+    /// </summary>
+    public void ChangeStatus(UserRegisterStatus status) => Status = status;
+
+    /// <summary>
     /// Тестовая сущность
     /// </summary>
     /// <param name="email">Почта</param>
     /// <param name="code">Код</param>
+    /// <param name="status">Статус регсистрации</param>
     /// <param name="detail">Детали</param>
     /// <param name="roles">Роли</param>
     /// <param name="hashPassword">Хеш</param>
@@ -79,6 +109,7 @@ public class User : Entity
     public static User CreateForTest(
         string? email = default,
         string? code = default,
+        UserRegisterStatus? status = default,
         UserDetail? detail = default,
         List<Role>? roles = default,
         string? hashPassword = default,
@@ -93,6 +124,7 @@ public class User : Entity
             {
                 Id = id ?? Guid.NewGuid(),
                 Email = email ?? string.Empty,
-                Details = detail ?? new()
+                Details = detail ?? new(),
+                Status = status ?? UserRegisterStatus.None,
             };
 }
