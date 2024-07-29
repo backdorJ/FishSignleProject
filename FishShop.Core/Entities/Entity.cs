@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations.Schema;
 using FishShop.Core.Abstractions;
 
 namespace FishShop.Core.Entities;
@@ -11,6 +12,7 @@ public class Entity
     /// <summary>
     /// Очередь событий
     /// </summary>
+    [GraphQLIgnore]
     private ConcurrentQueue<IDomainEvent> _concurrentQueue = new();
     
     /// <summary>
@@ -32,12 +34,14 @@ public class Entity
     /// Добавить событие в очередь
     /// </summary>
     /// <param name="domainEvent">Событие</param>
+    [GraphQLIgnore]
     public void AddDomainEvent(IDomainEvent domainEvent) => _concurrentQueue.Enqueue(domainEvent);
 
     /// <summary>
     /// Получить события
     /// </summary>
-    /// <returns>Событие</returns>
+    /// <returns>События</returns>
+    [GraphQLIgnore]
     public IEnumerable<IDomainEvent> GetDomainEvents()
     {
         var result = _concurrentQueue

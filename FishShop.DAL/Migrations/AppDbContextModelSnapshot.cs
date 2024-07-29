@@ -152,6 +152,45 @@ namespace FishShop.DAL.Migrations
                     b.ToTable("roles_permissions", (string)null);
                 });
 
+            modelBuilder.Entity("FishShop.Core.Entities.SignedDocumentPacket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ActualPacketVersionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActualPacketVersionId");
+
+                    b.ToTable("SignedDocumentPacket", "public");
+                });
+
+            modelBuilder.Entity("FishShop.Core.Entities.SignedDocumentPacketVersion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PacketId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PacketId");
+
+                    b.ToTable("SignedDocumentPacketVersion", "public");
+                });
+
             modelBuilder.Entity("FishShop.Core.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -237,6 +276,26 @@ namespace FishShop.DAL.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("FishShop.Core.Entities.SignedDocumentPacket", b =>
+                {
+                    b.HasOne("FishShop.Core.Entities.SignedDocumentPacketVersion", "ActualPacketVersion")
+                        .WithMany()
+                        .HasForeignKey("ActualPacketVersionId");
+
+                    b.Navigation("ActualPacketVersion");
+                });
+
+            modelBuilder.Entity("FishShop.Core.Entities.SignedDocumentPacketVersion", b =>
+                {
+                    b.HasOne("FishShop.Core.Entities.SignedDocumentPacket", "Packet")
+                        .WithMany("Versions")
+                        .HasForeignKey("PacketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Packet");
+                });
+
             modelBuilder.Entity("FishShop.Core.Entities.User", b =>
                 {
                     b.OwnsOne("FishShop.Core.Entities.UserDetail", "Details", b1 =>
@@ -301,6 +360,11 @@ namespace FishShop.DAL.Migrations
             modelBuilder.Entity("FishShop.Core.Entities.Role", b =>
                 {
                     b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("FishShop.Core.Entities.SignedDocumentPacket", b =>
+                {
+                    b.Navigation("Versions");
                 });
 #pragma warning restore 612, 618
         }

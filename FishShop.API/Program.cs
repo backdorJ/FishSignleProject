@@ -31,8 +31,8 @@ var app = builder.Build();
 using var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<DbSeeder>();
 var migrator = scope.ServiceProvider.GetRequiredService<Migrator>();
-await migrator.MigrateAsync();
-await seeder.SeedAsync(CancellationToken.None);
+await migrator.MigrateAsync().ConfigureAwait(false);
+await seeder.SeedAsync(CancellationToken.None).ConfigureAwait(true);
 
 
 app.UseCors();

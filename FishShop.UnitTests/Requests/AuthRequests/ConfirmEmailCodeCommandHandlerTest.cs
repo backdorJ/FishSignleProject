@@ -30,7 +30,7 @@ public class ConfirmEmailCodeCommandHandlerTest : UnitTestBase
     /// Должен принять код
     /// </summary>
     [Fact]
-    public async Task Handle_ShouldSubmitCode()
+    public async Task Handle_WithRequest_ShouldSubmitCode()
     {
         var request = new ConfirmEmailCodeCommand
         {
@@ -40,7 +40,7 @@ public class ConfirmEmailCodeCommandHandlerTest : UnitTestBase
 
         var handler = new ConfirmEmailCodeCommandHandler(_dbContext);
         await handler.Handle(request, default);
-
+        
         var response = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.Email == request.Email);
 

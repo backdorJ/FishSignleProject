@@ -56,3 +56,17 @@ jobs:
 
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run Roslyn Analyzers
+        run: dotnet build --no-restore /p:RunAnalyzersDuringBuild=true /p:TreatWarningsAsErrors=true
