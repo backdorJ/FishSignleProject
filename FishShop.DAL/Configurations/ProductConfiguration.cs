@@ -19,6 +19,7 @@ public class ProductConfiguration : EntityBaseConfiguration<Product>
             .IsRequired()
             .HasComment("Наименование товара")
             .HasColumnName("name")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
             .HasMaxLength(200);
 
         builder.Property(p => p.Type)

@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="HotChocolate.AspNetCore" Version="13.9.7" />
+      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.9.7" />
       <PackageReference Include="HotChocolate.Data" Version="13.9.7" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     </ItemGroup>

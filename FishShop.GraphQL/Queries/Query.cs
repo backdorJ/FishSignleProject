@@ -1,5 +1,6 @@
 using FishShop.Core.Abstractions;
 using FishShop.Core.Entities;
+using HotChocolate.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FishShop.GraphQL.Queries;
@@ -14,7 +15,9 @@ public class Query
     /// </summary>
     /// <param name="dbContext">Контекст БД</param>
     /// <returns>Товары</returns>
+    [Authorize]
     [UseProjection]
+    [GraphQLDescription("Получить товары")]
     public IQueryable<Product> Read([FromServices] IDbContext dbContext)
         => dbContext.Products;
 }

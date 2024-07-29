@@ -7,6 +7,8 @@ namespace FishShop.Core.Entities;
 /// </summary>
 public class Product : Entity
 {
+    private string _name = default!;
+    
     /// <summary>
     /// Конструктор
     /// </summary>
@@ -33,7 +35,13 @@ public class Product : Entity
     /// <summary>
     /// Название товара
     /// </summary>
-    public string Name { get; set; }
+    public string Name
+    {
+        get => _name;
+        set => _name = string.IsNullOrWhiteSpace(value)
+            ? throw new ArgumentException("Название товара")
+            : value;
+    }
 
     /// <summary>
     /// Цена товара

@@ -18,7 +18,7 @@ public static class Entry
         app.MapGraphQLHttp();
         app.MapBananaCakePop();
     }
-    
+
     /// <summary>
     /// Добавить сервис GraphQl
     /// </summary>
@@ -26,6 +26,7 @@ public static class Entry
     public static void AddMyGraphQl(this IServiceCollection services)
         => services.AddGraphQLServer()
             .AddQueryType<Query>()
+            .AddAuthorization()
             .AddProjections()
             .AddFiltering()
             .AddSorting();
